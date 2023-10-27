@@ -16,12 +16,12 @@ class ExceptionController {
     }
 
     @ExceptionHandler
-    fun handleNotFoundException(ex: RequiredFieldException): ErrorResponse {
+    fun handleRequiredFieldException(ex: RequiredFieldException): ErrorResponse {
         return ErrorResponse(ex.message, 500)
     }
 
     @ExceptionHandler
-    fun handleNotFoundException(ex: Exception): ErrorResponse {
+    fun handleGenericException(ex: Exception): ErrorResponse {
         return ErrorResponse(ErrorMessages.GENERIC_ERROR.message, 500)
     }
 }
