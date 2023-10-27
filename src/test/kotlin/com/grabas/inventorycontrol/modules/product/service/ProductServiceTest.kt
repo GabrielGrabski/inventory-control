@@ -4,6 +4,7 @@ import com.grabas.inventorycontrol.exception.enums.ErrorMessages
 import com.grabas.inventorycontrol.exception.model.NotFoundException
 import com.grabas.inventorycontrol.exception.model.RequiredFieldException
 import com.grabas.inventorycontrol.modules.product.dto.ProductRequest
+import com.grabas.inventorycontrol.modules.product.dto.ProductResponse
 import com.grabas.inventorycontrol.modules.product.model.Product
 import com.grabas.inventorycontrol.modules.product.repository.ProductRepository
 import org.assertj.core.api.Assertions.*
@@ -72,7 +73,8 @@ class ProductServiceTest {
     fun findById_shouldReturnEntity_whenHasDataInDB() {
         `when`(repository.findById(anyInt()))
             .thenReturn(Optional.of(Product(1, "Name", "Desc", BigDecimal.TEN)))
-        assertThat(service.findById(1)).extracting { it.id }
+        assertThat(service.findById(1))
+            .isEqualTo(ProductResponse(1, "Name", "Desc", BigDecimal.TEN))
     }
 
     @Test
