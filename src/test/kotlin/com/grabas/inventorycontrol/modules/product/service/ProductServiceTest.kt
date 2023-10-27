@@ -61,7 +61,7 @@ class ProductServiceTest {
     }
 
     @Test
-    fun save_shouldSave_whenAlFieldsArePresent() {
+    fun save_shouldSave_whenAllFieldsArePresent() {
         assertThatCode { service.save(ProductRequest("Name", "Desc", BigDecimal.ONE)) }
             .doesNotThrowAnyException()
 
