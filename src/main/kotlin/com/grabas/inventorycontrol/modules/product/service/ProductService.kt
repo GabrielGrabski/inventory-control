@@ -9,7 +9,6 @@ import com.grabas.inventorycontrol.modules.product.model.Product
 import com.grabas.inventorycontrol.modules.product.repository.ProductRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.lang.RuntimeException
 import java.lang.String.format
 import java.math.BigDecimal
 
@@ -18,11 +17,13 @@ class ProductService(@Autowired val repository: ProductRepository) {
 
     fun save(request: ProductRequest) {
         validateProduct(request)
-        repository.save(Product(
-            name = request.name,
-            description = request.description,
-            price = request.price
-        ))
+        repository.save(
+            Product(
+                name = request.name,
+                description = request.description,
+                price = request.price
+            )
+        )
     }
 
     fun findAll(): List<ProductResponse> {
@@ -38,12 +39,16 @@ class ProductService(@Autowired val repository: ProductRepository) {
     }
 
     private fun validateProduct(request: ProductRequest) {
-        validateEmptyOrNullFields(request)
+        validateEmptyFields(request)
+        validatePriceEqualsZero(request)
     }
 
-    private fun validateEmptyOrNullFields(request: ProductRequest) {
+    private fun validateEmptyFields(request: ProductRequest) {
         if (request.name.isEmpty()) throw RequiredFieldException(ErrorMessages.NAME_REQUIRED.message)
         if (request.description.isEmpty()) throw RequiredFieldException(ErrorMessages.DESCRIPTION_REQUIRED.message)
+    }
+
+    private fun validatePriceEqualsZero(request: ProductRequest) {
         if (request.price == BigDecimal.ZERO) throw RequiredFieldException(ErrorMessages.PRICE_SHOULD_NOT_BE_ZERO.message)
     }
 }
