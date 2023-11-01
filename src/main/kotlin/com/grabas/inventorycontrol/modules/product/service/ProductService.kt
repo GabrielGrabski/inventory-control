@@ -3,6 +3,7 @@ package com.grabas.inventorycontrol.modules.product.service
 import com.grabas.inventorycontrol.exception.enums.ErrorMessages
 import com.grabas.inventorycontrol.exception.model.NotFoundException
 import com.grabas.inventorycontrol.exception.model.RequiredFieldException
+import com.grabas.inventorycontrol.modules.category.service.CategoryService
 import com.grabas.inventorycontrol.modules.product.dto.ProductRequest
 import com.grabas.inventorycontrol.modules.product.dto.ProductResponse
 import com.grabas.inventorycontrol.modules.product.model.Product
@@ -13,15 +14,21 @@ import java.lang.String.format
 import java.math.BigDecimal
 
 @Service
-class ProductService(@Autowired val repository: ProductRepository) {
+class ProductService(
+    @Autowired private val repository: ProductRepository,
+    @Autowired private val categoryService: CategoryService
+) {
 
     fun save(request: ProductRequest) {
+        val categories = categoryService.findByIdsOrThrow(request.categoriesIds)
         validateProduct(request)
         repository.save(
             Product(
                 name = request.name,
                 description = request.description,
-                price = request.price
+                price = request.price,
+                quantity = request.quantity,
+                categories = categories
             )
         )
     }

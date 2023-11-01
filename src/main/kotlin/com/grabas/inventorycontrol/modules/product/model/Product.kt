@@ -1,5 +1,6 @@
 package com.grabas.inventorycontrol.modules.product.model
 
+import com.grabas.inventorycontrol.modules.category.model.Category
 import jakarta.persistence.*
 import java.math.BigDecimal
 
@@ -9,8 +10,8 @@ data class Product(
 
     @Id
     @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PRODUCT_SEQ")
-    @SequenceGenerator(name = "PRODUCT_SEQ", sequenceName = "PRODUCT_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_PRODUCT")
+    @SequenceGenerator(name = "SEQ_PRODUCT", sequenceName = "SEQ_PRODUCT", allocationSize = 1)
     val id: Int? = null,
 
     @Column(name = "NAME")
@@ -20,5 +21,16 @@ data class Product(
     val description: String,
 
     @Column(name = "PRICE")
-    val price: BigDecimal
+    val price: BigDecimal,
+
+    @Column(name = "QUANTITY")
+    val quantity: Int,
+
+    @ManyToMany
+    @JoinTable(
+        name = "PRODUCT_CATEGORY",
+        joinColumns = [JoinColumn(name = "PRODUCT_ID")],
+        inverseJoinColumns = [JoinColumn(name = "CATEGORY_ID")]
+    )
+    val categories: List<Category>
 )
