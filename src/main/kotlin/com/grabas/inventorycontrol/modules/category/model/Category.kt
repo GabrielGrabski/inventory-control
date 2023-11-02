@@ -12,11 +12,11 @@ data class Category(
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CATEGORY")
     @SequenceGenerator(name = "SEQ_CATEGORY", sequenceName = "SEQ_CATEGORY", allocationSize = 1)
-    val id: Int,
+    val id: Int? = null,
 
-    @Column(name = "NAME")
+    @Column(name = "NAME", unique = true)
     val name: String,
 
     @ManyToMany(mappedBy = "categories")
-    val products: List<Product>
+    val products: MutableList<Product>
 )

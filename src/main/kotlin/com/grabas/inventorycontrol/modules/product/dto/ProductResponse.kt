@@ -19,7 +19,7 @@ data class ProductResponse(val id: Int,
                 product.description.lowercase().replaceFirstChar { it.titlecase() },
                 product.price,
                 product.quantity,
-                product.categories.map { CategoryWithoutProductResponse(it.id, it.name) }
+                product.categories.map { CategoryWithoutProductResponse(it.id!!, it.name) }
             )
     }
 }

@@ -1,6 +1,7 @@
 package com.grabas.inventorycontrol.modules.product.model
 
 import com.grabas.inventorycontrol.modules.category.model.Category
+import com.grabas.inventorycontrol.modules.product.dto.ProductRequest
 import jakarta.persistence.*
 import java.math.BigDecimal
 
@@ -32,5 +33,16 @@ data class Product(
         joinColumns = [JoinColumn(name = "PRODUCT_ID")],
         inverseJoinColumns = [JoinColumn(name = "CATEGORY_ID")]
     )
-    val categories: List<Category>
-)
+    val categories: MutableList<Category>
+) {
+
+    constructor(request: ProductRequest, categories: MutableList<Category>) :
+            this(
+                request.id,
+                request.name,
+                request.description,
+                request.price,
+                request.quantity,
+                categories
+            )
+}
