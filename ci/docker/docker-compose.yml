@@ -8,10 +8,23 @@ services:
       POSTGRES_PASSWORD: root
       POSTGRES_DB: inventory-control
     ports:
-      - 5441:5432
+      - "5441:5432"
     volumes:
       - pg-data:/var/lib/postgressql/data
     restart: unless-stopped
 
+  rabbit:
+    image: rabbitmq:management
+    environment:
+      RABBITMQ_DEFAULT_USER: root
+      RABBITMQ_DEFAULT_PASS: root
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbit-data:/var/lib/rabbitmq
+    restart: unless-stopped
+
 volumes:
   pg-data:
+  rabbit-data:
