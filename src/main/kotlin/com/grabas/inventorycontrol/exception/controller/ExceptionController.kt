@@ -7,6 +7,7 @@ import com.grabas.inventorycontrol.exception.model.RequiredFieldException
 import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import java.lang.String.format
 
 @RestControllerAdvice
 class ExceptionController : Logging {
@@ -24,6 +25,6 @@ class ExceptionController : Logging {
     @ExceptionHandler
     fun handleGenericException(ex: Exception): ErrorResponse {
         logger.error(ex.message ?: "")
-        return ErrorResponse(ErrorMessages.GENERIC_ERROR.message, 500)
+        return ErrorResponse(format(ErrorMessages.GENERIC_ERROR.message, ex.message), 500)
     }
 }

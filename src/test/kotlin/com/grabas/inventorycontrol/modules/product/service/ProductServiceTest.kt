@@ -19,6 +19,9 @@ import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnitRunner
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.math.BigDecimal
 import java.util.*
@@ -112,20 +115,23 @@ class ProductServiceTest {
 
     @Test
     fun findAll_shouldReturnEmptyList_whenHasNoDataInDB() {
-        `when`(repository.findAll()).thenReturn(emptyList())
-        assertThat(service.findAll()).isEmpty()
+        `when`(repository.findAll(PageRequest.of(0, 2, Sort.Direction.DESC, "id")))
+            .thenReturn(PageImpl(emptyList()))
+        assertThat(service.findAll(0, 2)).isEmpty()
     }
 
     @Test
     fun findAll_shouldReturnPopulatedList_whenHasDataInDb() {
-        `when`(repository.findAll()).thenReturn(
-            listOf(
-                Product(1, "Name", "Desc", BigDecimal.TEN, 1, mutableListOf()),
-                Product(2, "Product 2", "Desc 2", BigDecimal.valueOf(200), 1, mutableListOf()),
+        `when`(repository.findAll(PageRequest.of(0, 2, Sort.Direction.DESC, "id"))).thenReturn(
+            PageImpl(
+                listOf(
+                    Product(1, "Name", "Desc", BigDecimal.TEN, 1, mutableListOf()),
+                    Product(2, "Product 2", "Desc 2", BigDecimal.valueOf(200), 1, mutableListOf()),
+                )
             )
         )
 
-        assertThat(service.findAll()).hasSize(2)
+        assertThat(service.findAll(0, 2)).hasSize(2)
     }
 
     @Test

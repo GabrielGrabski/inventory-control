@@ -19,6 +19,9 @@ import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnitRunner
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.util.*
 
@@ -78,19 +81,22 @@ class CategoryServiceTest {
 
     @Test
     fun findAll_shoudReturnEmptyList_whenNotExists() {
-        `when`(repository.findAll()).thenReturn(emptyList())
-        assertThat(service.findAll()).isEmpty()
+        `when`(repository.findAll(PageRequest.of(0, 2, Sort.Direction.DESC, "id"))).thenReturn(PageImpl(emptyList()))
+        assertThat(service.findAll(0, 2).content).isEmpty()
     }
 
     @Test
     fun findAll_shoudReturnList_whenExists() {
-        `when`(repository.findAll()).thenReturn(
-            mutableListOf(
-                Category(1, "C1", mutableListOf()),
-                Category(2, "C2", mutableListOf()),
+        `when`(repository.findAll(PageRequest.of(0, 2, Sort.Direction.DESC, "id"))).thenReturn(
+            PageImpl(
+                mutableListOf(
+                    Category(1, "C1", mutableListOf()),
+                    Category(2, "C2", mutableListOf()),
+                )
             )
         )
-        assertThat(service.findAll())
+
+        assertThat(service.findAll(0, 2).content)
             .hasSize(2)
             .containsExactly(
                 CategoryResponse(1, "C1", mutableListOf()),

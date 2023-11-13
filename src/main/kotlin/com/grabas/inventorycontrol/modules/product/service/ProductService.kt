@@ -11,6 +11,9 @@ import com.grabas.inventorycontrol.modules.product.dto.ProductResponse
 import com.grabas.inventorycontrol.modules.product.model.Product
 import com.grabas.inventorycontrol.modules.product.repository.ProductRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import java.lang.String.format
 import java.math.BigDecimal
@@ -27,11 +30,11 @@ class ProductService(
         repository.save(Product(request, categories.toMutableList()))
     }
 
-    fun findAll(): List<ProductResponse> {
-        return repository.findAll()
+    fun findAll(pageNumber: Int, pageSize: Int): Page<ProductResponse> =
+        repository
+            .findAll(PageRequest.of(pageNumber, pageSize, Sort.Direction.DESC, "id"))
             .map { ProductResponse.from(it) }
-            .toCollection(mutableListOf())
-    }
+
 
     fun findById(id: Int): ProductResponse {
         val product = repository.findById(id)

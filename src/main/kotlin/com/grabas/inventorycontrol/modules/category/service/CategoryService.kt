@@ -11,6 +11,9 @@ import com.grabas.inventorycontrol.modules.product.dto.ProductWithoutCategory
 import com.grabas.inventorycontrol.modules.product.model.Product
 import com.grabas.inventorycontrol.modules.product.repository.ProductRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 
 @Service
@@ -32,9 +35,10 @@ class CategoryService(
         return CategoryResponse(category.id!!, category.name, getProductResponse(category.products))
     }
 
-    fun findAll(): List<CategoryResponse> {
-        return repository.findAll().map { CategoryResponse(it.id!!, it.name, getProductResponse(it.products)) }
-    }
+    fun findAll(pageNumber: Int, pageSize: Int): Page<CategoryResponse> =
+        repository
+            .findAll(PageRequest.of(pageNumber, pageSize, Sort.Direction.DESC, "id"))
+            .map { CategoryResponse(it.id!!, it.name, getProductResponse(it.products)) }
 
     fun associateProductToCategoryAndSave(categories: List<Category>, products: List<Product>) {
         categories.forEach { it.products.addAll(products) }
@@ -47,27 +51,23 @@ class CategoryService(
         return categories
     }
 
-    fun findByIds(ids: List<Int>): List<Category> {
-        return repository.findAllById(ids)
-    }
+    fun findByIds(ids: List<Int>): List<Category> = repository.findAllById(ids)
 
-    fun findByIdOrThrow(id: Int): Category {
-        return repository.findById(id).orElseThrow { NotFoundException(ErrorMessages.CATEGORY_NOT_FOUND.message) }
-    }
+    fun findByIdOrThrow(id: Int): Category =
+        repository
+            .findById(id)
+            .orElseThrow { NotFoundException(ErrorMessages.CATEGORY_NOT_FOUND.message) }
 
     private fun validateEmptyCategories(categories: List<Category>) {
         if (categories.isEmpty()) throw NotFoundException(ErrorMessages.CATEGORIES_NOT_FOUND.message);
     }
 
-    private fun validateRequest(request: CategoryRequest) {
-        validateEmptyName(request)
-    }
+    private fun validateRequest(request: CategoryRequest) = validateEmptyName(request)
 
     private fun validateEmptyName(request: CategoryRequest) {
         if (request.name.isBlank()) throw RequiredFieldException(ErrorMessages.NAME_REQUIRED.message)
     }
 
-    private fun getProductResponse(products: List<Product>): List<ProductWithoutCategory> {
-        return products.map { ProductWithoutCategory(it.id!!, it.name, it.description, it.price, it.quantity) }
-    }
+    private fun getProductResponse(products: List<Product>): List<ProductWithoutCategory> =
+        products.map { ProductWithoutCategory(it.id!!, it.name, it.description, it.price, it.quantity) }
 }
