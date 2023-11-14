@@ -1,4 +1,9 @@
 spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: root
+    password: root
   flyway:
     locations: classpath:db/migration
   jpa:
